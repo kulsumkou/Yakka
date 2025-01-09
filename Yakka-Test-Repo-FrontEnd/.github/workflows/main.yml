@@ -1,0 +1,46 @@
+on:
+  push:
+    branches:
+      - testing
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🏗 Setup repo
+        uses: actions/checkout@v2
+
+      - name: 🏗 Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+          cache: yarn
+
+      - name: 🏗 Setup Expo
+        uses: expo/expo-github-action@v7
+        with:
+          expo-version: latest
+          token: TpVSCbdvMXpstykWiyL-g_I0nOY2wHToax5FT0pH
+
+      - name: Find Metro cache
+        id: metro-cache-dir-path
+        uses: actions/github-script@v4
+        with:
+          result-encoding: string
+          script: |
+            const os = require('os');
+            const path = require('path');
+            return path.join(os.tmpdir(), 'metro-cache');
+      - name: Restore Metro cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.metro-cache-dir-path.outputs.result }}
+          key: ${{ runner.os }}-metro-cache-${{ matrix.app }}-${{ github.ref }}
+          restore-keys: |
+            ${{ runner.os }}-metro-cache-${{ matrix.app }}-${{ github.base_ref }}
+            ${{ runner.os }}-metro-cache-${{ matrix.app }}-
+      - name: 📦 Install dependencies
+        run: yarn install
+
+      - name: 🚀 Publish app to testing
+        if: github.ref == 'refs/heads/testing'
+        run: expo publish --non-interactive --release-channel preview

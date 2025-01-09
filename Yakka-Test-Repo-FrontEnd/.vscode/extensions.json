@@ -1,0 +1,11 @@
+{
+  "recommendations": [
+    "bradlc.vscode-tailwindcss",
+    "aaron-bond.better-comments",
+    "eamodio.gitlens",
+    "esbenp.prettier-vscode",
+    "wix.vscode-import-cost",
+    "naumovs.color-highlight",
+    "Gruntfuggly.todo-tree"
+  ]
+}
